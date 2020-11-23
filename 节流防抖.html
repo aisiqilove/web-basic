@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .dom {
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="dom"></div>
+  <script>
+    // 防抖 任务频繁触发的情况下，只有任务触发的间隔超过指定间隔的时候，任务才会执行。
+    // 场景 1.频繁点击
+    function debounce(fn, delay = 1000) {
+      let timer = null
+      return function (...args) {
+        clearTimeout(timer)
+        timer = setTimeout(() => {
+          fn.apply(this, args)
+        }, delay)
+      }
+    }
+
+    window.onload = function () {
+      // 1、获取这个按钮，并绑定事件
+      let dom = document.getElementsByClassName('dom')
+      var b = '123'
+      dom[0].addEventListener('click', debounce(click2))
+    }
+    function click2(value) {
+      console.log(value)
+    }
+    function resize() {
+      console.log('resize')
+    }
+    // 节流 指定时间只执行1次
+    // 场景 1.滚动 2.resize
+    function throttle(fn, delay = 1000) {
+      let flag = false
+      return function (...args) {
+        let that = this
+        if (flag) return
+        flag = true
+        setTimeout(() => {
+          fn.apply(that, args)
+          flag = false
+        }, delay)
+      }
+    }
+    
+    function merge(fn, delay = 1000) {
+      let timer = null
+      let last = 0
+      return function (...args) {
+        let now = new Date()
+        if (now - last < delay) {
+          clearTimeout(timer)
+          timer = setTimeout(() => {
+            last = now
+            fn.apply(this, args)
+          }, delay)
+        } else {
+          last = now
+          fn.apply(this, args)
+        }
+      }
+    }
+
+
+    window.addEventListener('resize', debounce(resize))
+  </script>
+</body>
+
+</html>

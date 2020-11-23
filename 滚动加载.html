@@ -1,0 +1,8 @@
+
+function scrollAndLoading() {
+  if(window.scrollY > prevY) {  // 判断用户是否向下滚动
+    prevY = window.scrollY
+    if(poll.current.getBoundingClientRect().top <= window.innerHeight) {
+      // 请求下一页数据
+    }
+  }

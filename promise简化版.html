@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    const PENDING = 'pending';
+    const RESOLVED = 'resolved';
+    const REJECTED = 'rejected';
+    function MyPromise(fn) {
+      that = this
+      that.status = PENDING
+      that.value = null
+      that.reason = null
+
+      that.resolvedCallbacks = []
+      that.rejectedCallbacks = []
+
+      function resolve(value) {
+        if (that.status === PENDING) {
+          that.status = RESOLVED
+          that.value = value
+          that.resolvedCallbacks.forEach(cb => cb(value))
+        }
+      }
+      function reject(reason) {
+        if (that.status === PENDING) {
+          that.status = REJECTED
+          that.reason = reason
+          that.rejectedCallbacks.forEach(cb => cb(reason))
+        }
+      }
+
+      try {
+        fn(resolve, reject)
+      } catch (e) {
+        reject(e)
+      }
+
+    }
+    // 2.链式调用
+    MyPromise.prototype.then = function (onFulfilled, onRejected) {
+      // 成功回调不传给它一个默认函数
+      onFulfilled = typeof onFulfilled === "function" ? onFulfilled : value => value;
+      // 对于失败回调直接抛错
+      onRejected = typeof onRejected === "function" ? onRejected : error => { throw error };
+
+      that = this
+      if (that.status === PENDING) {
+        that.resolvedCallbacks.push(onFulfilled)
+        that.rejectedCallbacks.push(onRejected)
+      }
+      if (that.status === RESOLVED) {
+        onFulfilled(that.value)
+      }
+      if (that.status === REJECTED) {
+        onRejected(that.reason)
+      }
+      return that
+    }
+    // 3.捕获异常
+    MyPromise.prototype.catch = function (onRejected) {
+      return this.then(null, onRejected)
+    }
+
+    let promise = new MyPromise((resolve, reject) => {
+      setTimeout(() => {
+        resolve('resolve')
+      })
+    })
+
+    promise.then((data) => {
+      console.log('then 1 ' + data)
+      return data
+    }).then((data) => {
+      console.log('then 2 ' + data)
+    })
+
+  </script>
+</body>
+
+</html>

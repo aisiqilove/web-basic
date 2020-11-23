@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    {
+      // (1) 自定义事件
+      // 1创建 Event 2监听 addEventListener 3触发 dispatchEvent
+      let myEvent = new Event('liczEvent')
+
+      document.addEventListener('liczEvent', () => {
+        console.log('liczEvent')
+      })
+      document.dispatchEvent(myEvent)
+
+      // 3种自定义事件方法
+      // 1.new Event()
+
+      // 2.new CustomEvent('event_name', {
+      //   detail: {
+      //     // 将需要传递的参数放到这里
+      //     // 可以在监听的回调函数中获取到：event.detail
+      //   }
+      // });
+
+      // 3.createEvent：创建一个事件
+      // let myEvent = document.createEvent('CustomEvent'); // 注意这里是 CustomEvent
+      // // initEvent：初始化一个事件
+      // myEvent.initEvent(
+      //   // 1. event_name：事件名称
+      //   // 2. canBubble：是否冒泡
+      //   // 3. cancelable：是否可以取消默认行为
+      // )
+    }
+
+    {
+      // (2) Object.create() 
+      function create(proto) {
+        // 创建一个新对象
+        function F() { }
+        // 设置原型
+        F.prototype = proto
+        return new F()
+      }
+    }
+
+    {
+      // (3) es5 继承
+      // 使用 ES5 实现继承，简要在 3 行代码：
+      // Father.call(this) 。在 Child 中通过 Father.call(this) ，将 Father 的 this 修改为 Child 的 this
+      // Child.prototype = Object.create(Father.prototype) 。将 Child 的原型链绑定到 Father 的原型链上。
+      // Child.prototype.constructor = Child。这个构造函数的实例的构造方法 constructor 指向自身。
+
+      // Child.prototype = Object.create(Father.prototype) 这句话：
+      // 这一步不用 Child.prototype = Father.prototype 的原因是怕共享内存，修改父类原型对象就会影响子类
+      // 不用 Child.prototype = new Parent() 的原因是会调用 2 次父类的构造方法（另一次是 call），会存在一份多余的父类实例属性
+      // Object.create 是创建了父类原型的副本，与父类原型完全隔离
+
+      function Father() {
+        this.name = 'Father'
+      }
+      Father.prototype.sayHolle = function () {
+        console.log(`${this.name} 抱富`)
+      }
+
+      function Child() {
+        // Father.call(this)
+        // this.name = 'Child'
+      }
+
+      Child.prototype = Object.create(Father.prototype)
+      Child.prototype.constructor = Child
+
+      var child = new Child()
+      child.sayHolle()
+    }
+
+    {
+      // (4) instanceOf 查找原型链
+      function instanceOf(a, b) {
+        if (typeof a !== 'object' || b === null) {
+          return false
+        }
+        // let proto = a.__proto__
+        let proto = Object.getPrototypeOf(a)
+        let prototype = b.prototype
+
+        while (true) {
+          if (proto === null) {
+            return false
+          }
+          if (proto === prototype) {
+            return true
+          }
+          proto = proto.__proto__
+        }
+      }
+    }
+
+    {
+      // (5)
+
+    }
+
+
+  </script>
+</body>
+
+</html>
