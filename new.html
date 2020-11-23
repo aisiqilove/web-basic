@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>new</title>
+</head>
+
+<body>
+    <script>
+
+        // 1. 创建一个空对象
+        // 2. 原型链
+        // 3. 绑定上下文this
+        // 4. 返回对象 如果返回值是对象 返回对象 如果是基本类型 改返回什么就返回什么
+
+        function myNew(fn, ...args) {
+            // var obj = new Object()
+            // 即实例可以访问构造函数原型（constructor.prototype）所在原型链上的属性
+            // obj = Object.create(fn.prototype)
+            // obj.__proto__ = fn.prototype
+
+            var obj = {}
+            obj = Object.create(fn.prototype)
+
+            var result = fn.apply(obj, args)
+            const isObject = typeof result === 'object' && result !== null
+            const isFunciton = typeof result === 'function'
+            return isObject || isFunciton ? result : obj
+        }
+        var fn = function (name) {
+            console.log(name)
+        }
+        fn.prototype.str = 'str'
+        var a = myNew(fn, 'licz')
+        var b = new fn('wangdi')
+        console.log(b.__proto__ === fn.prototype)
+        console.log(a.__proto__ === fn.prototype)
+
+        // 1. __proto__是每个对象都有的一个属性，而prototype是函数才会有的属性.
+        // 2.__proto__指向的是当前对象的原型对象，而prototype指向的，是以当前函数作为构造函数构造出来的对象的原型对象。
+        // 1.对象有属性__proto__, 指向该对象的构造函数的原型对象。
+        // 2.方法除了有属性__proto__, 还有属性prototype，prototype指向该方法的原型对象。
+    </script>
+</body>
+
+</html>

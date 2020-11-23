@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        // call/apply
+        // 模拟的步骤可以分为：
+        // 将函数设为对象的属性
+        // 执行该函数
+        // 删除该函数
+
+        Function.prototype.call2 = function (ctx, ...args) {
+            // ctx指定null 指向window
+            var ctx = ctx || window
+            ctx.fn = this
+            let result = ctx.fn(...args) // 使用 es6解构参数
+            delete ctx.fn
+            return result
+        }
+
+        Function.prototype.apply2 = function (ctx, args) {
+            var ctx = ctx || window
+            ctx.fn = this
+            let result = ctx.fn(...args)
+            delete ctx.fn
+            return result
+        }
+
+        var obj = {
+            a: 2
+        }
+        var obj2 = {
+            a: 22
+        }
+        var obj3 = {
+            a: 33
+        }
+        var fn2 = function (name, age) {
+            console.log(name)
+            console.log(age)
+            console.log(this.a)
+        }
+
+        fn2.call2(obj, 'licz', 18)
+        fn2.apply2(obj, ['licz2', 188])
+
+        var fn3 = fn2.bind(obj3, 'licz-bind')
+        fn3(28)
+
+
+        // bind 函数的两个特点：
+        // 返回一个函数
+        // 可以传入参数
+
+        Function.prototype.bind2 = function (ctx, ...args) {
+            if (typeof this !== "function") {
+                throw new Error("Function.prototype.bind - what is trying to be bound is not callable");
+            }
+            var self = this
+            // var args1 = [...arguments].slice(1) 截取参数
+            var fn = function () {
+                // var args2 = [...arguments].slice(1) 返回函数参数
+                return self.apply(this instanceof fn ? this : ctx, args.concat(...arguments))
+            }
+            // 修改返回函数的 prototype 为绑定函数的 prototype，实例就可以继承绑定函数的原型中的值
+            fn.prototype = Object.create(self.prototype)
+            return fn
+        }
+
+        var fn4 = fn2.bind2({a:'a'}, 'liczbind2')
+        fn2.prototype.str = 'str'
+        var fn5 = new fn4()
+
+        console.log(fn5.prototype === fn4.prototype)
+        var fn6 = new fn3()
+    </script>
+</body>
+
+</html>

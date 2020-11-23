@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+
+        // Array.flat(Infinity)
+
+
+        var arr = [1, 2, 3, [4, 5, [6, 7]]]
+
+        var flatten = function (arr) {
+            let array = []
+            arr.forEach(item => {
+                if (Array.isArray(item)) {
+                    array = array.concat(flatten(item))
+                } else {
+                    array.push(item)
+                }
+            })
+            return array
+        }
+
+        function flatten2(arr) {
+            return arr.reduce((prv, next) => {
+                return prv.concat(Array.isArray(next) ? flatten2(next) : next)
+            }, [])
+        }
+        console.log(flatten2(arr))
+    </script>
+</body>
+
+</html>
