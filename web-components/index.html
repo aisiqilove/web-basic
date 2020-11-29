@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>web-components</title>
+</head>
+
+<body>
+    <my-com title='my-com title' content='my-com'>
+    </my-com>
+    <script type='module'>
+        export default class MyCom extends HTMLElement {
+            constructor() {
+                super()
+                let attr = this.attributes;
+                this._data = {
+                    title: attr.title ? attr.title.value : '默认的标题',
+                    content: attr.content ? attr.content.value : '默认的内容',
+                }
+                this.render()
+            }
+
+            render() {
+                this.obj = document.createElement('div');
+                this.obj.innerHTML = `<div>${this._data.title}</div><div>${this._data.content}</div>`
+                this.append(this.obj)
+            }
+        }
+        window.customElements.define('my-com', MyCom);
+    </script>
+</body>
+
+</html>

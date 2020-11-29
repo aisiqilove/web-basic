@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        function add(a) {
+            function sum(b) { // 使用闭包
+                a = a + b; // 累加
+                return sum;
+            }
+            sum.toString = function () { // 重写toString()方法
+                return a;
+            }
+            return sum; // 返回一个函数
+        }
+    </script>
+</body>
+
+</html>
