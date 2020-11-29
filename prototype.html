@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+
+        function A() {
+            name = 'A'
+        }
+        A.prototype.name = 'prototype A'
+        A.prototype.say = function () {
+            console.log('say function')
+        }
+
+        var b = {}
+        var c = {}
+        var d = {}
+        function e() {}
+        // b.__proto__ = Object.create(A.prototype)
+
+        // 修改prototype 实例化对象访问其构造函数上的属性方法
+        c.prototype = Object.create(A.prototype)
+        e.prototype = Object.create(A.prototype)
+
+        // 继承原型链 访问原型链上的属性方法
+        // d.__proto__ = A.prototype
+        d = Object.create(A.prototype)
+
+        console.log(b.__proto__.__proto__ === A.prototype)
+        console.log(b.__proto__)
+        console.log(b.name)
+        
+        console.log(d.name)
+        
+        console.log(c.__proto__)
+        console.log(e.__proto__)
+    </script>
+</body>
+</html>
