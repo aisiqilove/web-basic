@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    // 浅拷贝 拷贝第一层的基本类型值，以及第一层的引用类型地址
+    // 1.Object.assign() 2.展开语法Spread 3.Array.prototype.slice()/concat()
+    // Object.assign Polyfill
+    if (typeof Object.assign2 !== 'function') {
+      // 1、判断原生 Object 是否支持该函数，如果不存在的话创建一个函数 assign，并使用 Object.defineProperty 将该函数绑定到 Object 上。
+      Object.defineProperty(Object, 'assign2', {
+        value: function (target) {
+          if (typeof target === null || typeof target === undefined) {
+            throw new Error('Cannot convert undefined or null to object')
+          }
+          // 3、使用 Object() 转成对象，并保存为 to，最后返回这个对象 to。
+          var to = Object(target);
+          console.log(to)
+          for (let index = 1; index < arguments.length; index++) {
+            const nextSource = arguments[index];
+            // 2、判断参数是否正确（目标对象不能为空，我们可以直接设置{}传递进去,但必须设置值）。
+            if (nextSource != null) { 
+              for (k in nextSource) {
+                // 4.使用 for..in 循环遍历出所有可枚举的自有属性。并复制给新的目标对象（使用 hasOwnProperty 获取自有属性，即非原型链上的属性）。
+                if (Object.prototype.hasOwnProperty.call(nextSource, k)) {
+                  to[k] = nextSource[k]
+                }
+              }
+            }
+          }
+          return to
+        },
+        writable: true,
+        configurable: true
+      })
+    }
+
+    let obj = Object.assign2({}, {name: 123}, 1,true,'str')
+    let obj2 = Object.assign({}, {name: 123}, 1,true,'str')
+    console.log(obj)
+    console.log(obj2)
+    
+
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    // 深拷贝 深拷贝会拷贝所有的属性，并拷贝属性指向的动态分配的内存
+    // 1.JSON.parse(JSON.stringify(object)) 2.jQuery.extend 3.lodash.cloneDeep()
+    // 问题：1 忽略 undefined、2 忽略 symbol、3 不能解决循环引用的对象、4 不能序列化函数、5 不能处理正则、6 不能正确处理new Date()
+
+    // lodash.cloneDeep() 
+
+    // 1.浅拷贝 2.递归/循环
+
+    function cloneDeep(source) {
+      if (!isObject(source)) return source
+      let target = {}
+      for (k in source) {
+        if (Object.prototype.hasOwnProperty.call(obj, k)) {
+          if (isObject(source[k])) {
+            target[k] = cloneDeep(source[k])
+          } else {
+            target[k] = source[k]
+          }
+        }
+      }
+
+      return target
+    }
+
+    // 解决循环引用 使用WeakMap 弱引用
+    function cloneDeep2(source, hash = new WeakMap()) {
+      if (!isObject(source)) return source
+      if (hash.has(source)) return hash.get(source)
+      let target = Array.isArray(source) ? [] : {}
+      hash.set(source, target)
+      for (k in source) {
+        if (Object.prototype.hasOwnProperty.call(obj, k)) {
+          if (isObject(source[k])) {
+            target[k] = cloneDeep2(source[k], hash)
+          } else {
+            target[k] = source[k]
+          }
+        }
+      }
+
+      return target
+    }
+
+    // 拷贝 Symbol
+    // Symbol 在 ES6 下才有，我们需要一些方法来检测出 Symbol 类型。
+    // 方法一：Object.getOwnPropertySymbols(...) 
+    // 方法二：Reflect.ownKeys(...)  MDN === Object.getOwnPropertyNames(target).concat(Object.getOwnPropertySymbols(target))
+
+    function cloneDeep3(source, hash = new WeakMap()) {
+      if (!isObject(source)) return source
+      if (hash.has(source)) return hash.get(source)
+      let target = Array.isArray(source) ? [] : {}
+      hash.set(source, target)
+      let symbols = Object.getOwnPropertySymbols(source)
+      if (symbols.length) {
+        symbols.forEach(k => {
+          if (isObject(source[k])) {
+            target[k] = cloneDeep3(source[k], hash);
+          } else {
+            target[k] = source[k];
+          }
+        });
+      }
+      for (k in source) {
+        if (Object.prototype.hasOwnProperty.call(obj, k)) {
+          if (isObject(source[k])) {
+            target[k] = cloneDeep2(source[k], hash)
+          } else {
+            target[k] = source[k]
+          }
+        }
+      }
+
+      return target
+    }
+
+    // 破解递归爆栈 递归改循环
+
+
+    // 判断对象
+    function isObject(obj) {
+      return typeof obj === 'object' && obj != null;
+    }
+  </script>
+</body>
+
+</html>
