@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="app">
+    <p>{{number}} {{dec}}</p>
+    <p l-html='dec'></p>
+    <p l-html='number'></p>
+    <input type="text" l-model='number'>
+  </div>
+  <script>
+
+    // 将$data的key代理到vm上去，用户就可以直接this.
+    function proxy(vm) {
+      Object.keys(vm.$data).forEach(key => {
+        Object.defineProperty(vm, key, {
+          get() {
+            return vm.$data[key]
+          },
+          set(v) {
+            vm.$data[key] = v
+          }
+        })
+      })
+    }
+
+    // 劫持
+    function defineReactive(obj, key, value) {
+      const dep = new Dep()
+
+      Object.defineProperty(obj, key, {
+        get() {
+          Dep.target && dep.addDep(Dep.target)
+          return value
+        },
+        set(v) {
+          value = v
+          dep.notify()
+        }
+      })
+    }
+
+    class Lvue {
+      constructor(options) {
+        const { el, data } = options
+        this.$el = el
+        this.$data = data
+        // 数据劫持
+        new Observer(this.$data)
+
+        proxy(this)
+
+        // 编译模板
+        new Compile(this.$el, this)
+      }
+
+
+    }
+
+    // 数据劫持
+    class Observer {
+      constructor(obj) {
+        this.walk(obj)
+      }
+
+      walk(obj) {
+        if (typeof obj !== 'object' || !obj) {
+          return
+        }
+        Object.keys(obj).forEach(key => {
+          defineReactive(obj, key, obj[key])
+          this.walk(obj[key])
+        })
+      }
+    }
+
+    function update(node, vm, exp, type) {
+      let fn = this.updater[type + 'Updater']
+      fn && fn(node, vm.$data[exp])
+      new Watcher(vm, exp, function () {
+        fn && fn(node, vm.$data[exp])
+      })
+    }
+
+    // 编译公共方法
+    const compileUtil = {
+      setVal(vm, exp, value) {
+        exp = exp.split('.'); // [a,b,c,d,e]
+        return exp.reduce((prev, next, currentIndex) => {
+            if (currentIndex === exp.length - 1) {
+                return prev[next] = value;
+            }
+            return prev[next];
+        }, vm.$data)
+      },
+      getVal(vm, exp) { // 获取实例上对应数据
+        exp = exp.split('.'); // [a,b,c,d,e]
+        return exp.reduce((prev, next) => {
+          return prev[next];
+        }, vm.$data)
+      },
+      getTextVal(vm, exp) { // 获取编译文本后到结果
+        return exp.replace(/\{\{([^}]+)\}\}/g, (...args) => {
+          return this.getVal(vm, args[1])
+        })
+      },
+      text(node, vm, value) {
+        let exp = this.getTextVal(vm, value);
+        console.log(exp)
+        console.log(RegExp.$1)
+        return
+        update.call(this, node, vm, exp, 'text')
+      },
+      html(node, vm, exp) {
+        update.call(this, node, vm, exp, 'html')
+      },
+      model(node, vm, exp) {
+
+        node.addEventListener('input', (e) => {
+            let newValue = e.target.value;
+            this.setVal(vm, exp, newValue);
+        })
+        update.call(this, node, vm, exp, 'model')
+      },
+      updater: { // 更新
+        textUpdater(node, value) {
+          node.textContent = value;
+        },
+        htmlUpdater(node, value) {
+          node.innerHTML = value;
+        },
+        modelUpdater(node, value) {
+          node.value = value;
+        }
+      }
+    }
+
+    // 编译
+    class Compile {
+      constructor(el, vm) {
+        this.$vm = vm
+
+        // 遍历el
+        this.$el = document.querySelector(el)
+        this.compile(this.$el)
+      }
+
+      // 是不是指令
+      isDirective(name) {
+        return name.includes('l-')
+      }
+
+      isMethods(name) {
+        return name.includes('@')
+      }
+
+      compile(el) {
+        // 1 遍历nodes
+        el.childNodes.forEach(node => {
+          if (node.nodeType === 1) {
+            // 元素
+            Array.from(node.attributes).forEach(attr => {
+              let { name, value } = attr
+              let [, type] = name.split('-')
+              if (this.isDirective(name)) {
+                compileUtil[type](node, this.$vm, value)
+              }
+            })
+            if (node.childNodes.length) {
+              this.compile(node)
+            }
+
+          } else if (node.nodeType === 3 && /\{\{(.*)\}\}/.test(node.textContent)) {
+            // 文本
+            let exp = node.textContent
+            compileUtil['text'](node, this.$vm, exp)
+          }
+        })
+      }
+    }
+
+
+
+    // 观察者 监听器：负责页面中的一个依赖的更新
+    class Watcher {
+      constructor(vm, key, fn) {
+        this.$vm = vm
+        this.$fn = fn
+        Dep.target = this
+        this.$vm[key]
+        Dep.target = null
+      }
+      update() {
+        this.$fn()
+      }
+    }
+
+    // 监听队列
+    class Dep {
+      constructor() {
+        this.$dep = []
+      }
+
+      addDep(dep) {
+        this.$dep.push(dep)
+      }
+
+      notify() {
+        this.$dep.forEach(dep => dep.update())
+      }
+    }
+
+    let app = new Lvue({
+      el: '#app',
+      data: {
+        number: 1,
+        dec: '这是一个介绍'
+      }
+    })
+
+    setInterval(() => {
+      // app.number++
+    }, 1000)
+  </script>
+</body>
+
+</html>
