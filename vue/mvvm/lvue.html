@@ -12,7 +12,7 @@
     <p>{{number}} {{dec}}</p>
     <p l-html='dec'></p>
     <p l-html='number'></p>
-    <input type="text" l-model='number'>
+    <input type="text" l-model='number' @input="inputChange" @click="inputClick">
   </div>
   <script>
 
@@ -51,6 +51,7 @@
         const { el, data } = options
         this.$el = el
         this.$data = data
+        this.$options = options
         // 数据劫持
         new Observer(this.$data)
 
@@ -93,10 +94,10 @@
       setVal(vm, exp, value) {
         exp = exp.split('.'); // [a,b,c,d,e]
         return exp.reduce((prev, next, currentIndex) => {
-            if (currentIndex === exp.length - 1) {
-                return prev[next] = value;
-            }
-            return prev[next];
+          if (currentIndex === exp.length - 1) {
+            return prev[next] = value;
+          }
+          return prev[next];
         }, vm.$data)
       },
       getVal(vm, exp) { // 获取实例上对应数据
@@ -122,10 +123,10 @@
       },
       model(node, vm, exp) {
 
-        node.addEventListener('input', (e) => {
-            let newValue = e.target.value;
-            this.setVal(vm, exp, newValue);
-        })
+        // node.addEventListener('input', (e) => {
+        //     let newValue = e.target.value;
+        //     this.setVal(vm, exp, newValue);
+        // })
         update.call(this, node, vm, exp, 'model')
       },
       updater: { // 更新
@@ -145,7 +146,7 @@
     class Compile {
       constructor(el, vm) {
         this.$vm = vm
-
+        console.log(vm)
         // 遍历el
         this.$el = document.querySelector(el)
         this.compile(this.$el)
@@ -165,21 +166,31 @@
         el.childNodes.forEach(node => {
           if (node.nodeType === 1) {
             // 元素
-            Array.from(node.attributes).forEach(attr => {
-              let { name, value } = attr
-              let [, type] = name.split('-')
-              if (this.isDirective(name)) {
-                compileUtil[type](node, this.$vm, value)
-              }
-            })
+            this.compileElement(node)
             if (node.childNodes.length) {
               this.compile(node)
             }
-
           } else if (node.nodeType === 3 && /\{\{(.*)\}\}/.test(node.textContent)) {
             // 文本
             let exp = node.textContent
             compileUtil['text'](node, this.$vm, exp)
+          }
+        })
+      }
+
+      compileElement(node) {
+        Array.from(node.attributes).forEach(attr => {
+          let { name, value } = attr
+          if (this.isDirective(name)) {
+            let [, type] = name.split('-')
+            compileUtil[type](node, this.$vm, value)
+          }
+          if (this.isMethods(name)) {
+            let type = name.substring(1)
+            // console.log(this.$vm)
+            // console.log(type)
+            const fn = this.$vm.$options.methods && this.$vm.$options.methods[value]
+            node.addEventListener(type, fn.bind(this.$vm))
           }
         })
       }
@@ -221,7 +232,19 @@
       data: {
         number: 1,
         dec: '这是一个介绍'
-      }
+      },
+      methods: {
+        inputChange(e) {
+          // console.log(e)
+          let newValue = e.target.value;
+          // console.log(newValue)
+          this.number = newValue
+        },
+        inputClick(e) {
+          console.log(e)
+          console.log('click')
+        }
+      },
     })
 
     setInterval(() => {
