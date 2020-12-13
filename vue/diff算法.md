@@ -15,6 +15,7 @@ diff是一个节点比较的算法
 4. 如果在旧vnode中找到与新vnode首部标记相同节点，patchVnode 并将elmToMove移动到旧首部标记dom前面
 5. 当新旧vnode没有相同标记，则通过createElm创建vnode
 
+标记不断相中间考虑
 当旧vnode首尾标记相交，而新vnode还有节点，则表示需要批量创建节点
 当新vnode首尾标记相交，而旧vnode还有节点，则表示需要批量删除节点
 
@@ -86,3 +87,4 @@ updateChildren主要作用是用一种较高效的方式比对新旧两个VNode�
 
 * 判断两个vnode是否相同节点，必要条件之一
 * 工作方式，不添加会怎样
+* 无key 原地更新，会造成不必要到更新和创建
