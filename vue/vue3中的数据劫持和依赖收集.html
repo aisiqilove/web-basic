@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id='app'> </div>
+  <script>
+
+    // vue2中需要递归遍历对象所有key，速度慢
+    // 数组响应化：覆盖数组原型⽅法，额外增加通知逻辑
+    // 新增或删除属性⽆法监听，需要使⽤特殊api
+    // 不⽀持Map、Set、Class等数据结构
+
+    // Proxy
+    // 代理整个对象，从⽽侦测数据变化
+    // Reflect⽤于执⾏对象默认操作，更规范、更友好
+    // 内存减少一半 编译提高一半
+    
+    // 懒执行
+
+    // 传⼊对象应该是⼀个⾮null的object
+    const isObject = v => typeof v === 'object' && v !== null
+
+    function reactive(obj) {
+      if (!isObject(obj)) {
+        return obj
+      }
+
+      return new Proxy(obj, {
+        get(target, key) {
+          const res = Reflect.get(target, key)
+          // console.log(res)
+          track(target, key)
+          // 递归处理对象
+          return isObject(res) ? reactive(res) : res
+          return res
+        },
+        set(target, key, value) {
+          trigger(target, key)
+          const res = Reflect.set(target, key, value)
+          return res
+        },
+        deleteProperty(target, key, value) {
+          trigger(target, key)
+          const res = Reflect.deleteProperty(target, key, value)
+          return res
+        },
+      })
+    }
+
+    const obj = reactive({ name: 'foo', age: 18 })
+
+    // setupRenderEffect函数中使⽤effect函数做依赖收集
+    // 临时存储响应式函数
+    const effectStack = []
+
+    // 保存映射关系
+
+
+    const targetMap = new WeakMap()
+
+    function effect(fn) {
+      // 错误处理
+      // fn 进入 effectStack
+      // fn执行
+      // fn 弹出 effectStack
+      const e = createReactiveEffect(fn)
+      // 执⾏⼀次触发依赖收集
+      e()
+      return e
+    }
+
+    function createReactiveEffect(fn) {
+      const effect = function () {
+        try {
+          effectStack.push(effect)
+          return fn()
+        } finally {
+          effectStack.pop()
+        }
+      }
+      return effect
+    }
+
+    // targetMap => target<WeakMap>: { key<Map>: [cb ]<set> }
+
+    // 跟踪函数： 负责依赖收集
+    function track(target, key) {
+      // 1获取 effect fn
+      const effect = effectStack[effectStack.length - 1]
+
+      if (effect) {
+        // 获取target对应依赖map 
+
+        let depMap = targetMap.get(target)
+        if (!depMap) {
+          depMap = new Map()
+          targetMap.set(target, depMap)
+        }
+
+        let deps = depMap.get(key)
+
+        if (!deps) {
+          deps = new Set()
+          depMap.set(key, deps)
+        }
+
+        // 将响应函数添加到依赖集合
+
+        deps.add(effect)
+
+      }
+
+    }
+
+    // 执行依赖更新
+    function trigger(target, key) {
+      const depMap = targetMap.get(target)
+
+      if (!depMap) {
+        return
+      }
+
+      let deps = depMap.get(key)
+
+      if (deps) {
+        deps.forEach(dep => dep())
+      }
+    }
+
+    const app = document.querySelector('#app')
+
+    effect(() => {
+      console.log('effect1', obj.name)
+    })
+
+    effect(() => {
+      console.log('effect2', obj.age)
+      app.innerHTML = `<div>${obj.name} 永远18岁，${obj.age}</div>`
+    })
+
+
+    // 修改⼀下数值
+    setInterval(() => {
+      obj.age > 100 ? '' : obj.age++
+    }, 1000);
+
+  </script>
+</body>
+
+</html>
