@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    // var memo = []
+    var fibNumber = 0
+    var fib2Number = 0
+    var fib3Number = 0
+
+    function fib(n) {
+      if (n < 1) return 0
+      var memo = new Array(n).fill(0)
+      return helper(memo, n);
+    }
+    function helper(memo, n) {
+      // base case
+      if (n == 1 || n == 2) return 1;
+      // 已经计算过
+      if (memo[n]) return memo[n];
+      fibNumber++
+
+      memo[n] = helper(memo, n - 1) + helper(memo, n - 2)
+      return memo[n];
+    }
+
+    function fib2(n) {
+      if (n == 1 || n == 2) return 1;
+      fib2Number++
+
+      return fib2(n - 1) + fib2(n - 2);
+    }
+
+    function fib3(n) {
+      if (n == 1 || n == 2) return 1;
+
+      var dp = new Array(n).fill(0)
+      dp[1] = dp[2] = 1
+
+      for (let i = 3; i <= n; i++) {
+        dp[i] = dp[i - 1] + dp[i - 2]
+        fib3Number++
+
+      }
+      return dp[n]
+    }
+
+    console.log(fib(20))
+
+    console.log(fib2(20))
+
+    console.log(fib3(20))
+
+
+    console.log('-----------------------------------------------1------------------------' + fibNumber)
+    console.log('-----------------------------------------------2------------------------' + fib2Number)
+    console.log('-----------------------------------------------3------------------------' + fib3Number)
+
+  </script>
+</body>
+
+</html>
