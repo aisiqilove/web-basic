@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div class="coinChange"></div>
+  <div class="coinChange2"></div>
+  <script>
+    function coinChange(coins = [], amount) {
+      function dp(n) {
+        if (n == 0) return 0
+        if (n < 0) return -1
+
+        var res = Infinity
+        for (let i = 0; i < coins.length; i++) {
+          var subproblem = dp(n - coins[i])
+
+          if (subproblem == -1) {
+            continue
+          }
+          
+          res = Math.min(res, 1 + subproblem)
+        }
+        return res != Infinity ? res : -1
+
+      }
+
+      return dp(amount)
+    }
+
+    function coinChange2(coins = [], amount) {
+      var dps = new Array(amount).fill(0)
+      function dp(n) {
+        if (dps[n]) return dps[n]
+        if (n == 0) return 0
+        if (n < 0) return -1
+        var res = Infinity
+        for (let i = 0; i < coins.length; i++) {
+          var subproblem = dp(n - coins[i])
+
+          if (subproblem == -1) {
+            continue
+          }
+          debugger
+          res = Math.min(res, 1 + subproblem)
+        }
+
+        dps[n] = res != Infinity ? res : -1
+        return dps[n]
+
+      }
+
+      return dp(amount)
+    }
+
+    function coinChange3(coins = [], amount) {
+
+      var dp = new Array(amount + 1).fill(amount + 1)
+      dp[0] = 0
+      for (let i = 0; i < dp.length; i++) {
+        for (let j = 0; j < coins.length; j++) {
+          if (i - coins[j] < 0) {
+            continue
+          }
+          dp[i] = Math.min(dp[i], 1 + dp[i - coins[j]])
+
+          // console.log(`${dp[i]} --- ${dp[i - coins[j]]} ---- ${coins[j]}`)
+        }
+      }
+
+      return (dp[amount] == amount + 1) ? -1 : dp[amount]
+    }
+
+
+    var a = coinChange2([1, 2, 5], 11) // 3
+    var b = coinChange3([1, 2, 5], 11) // 3
+    var coinChange = document.querySelector('.coinChange')
+    var coinChange2 = document.querySelector('.coinChange2')
+    coinChange.innerHTML = a
+    coinChange2.innerHTML = b
+  </script>
+</body>
+
+</html>

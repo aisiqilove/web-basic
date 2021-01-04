@@ -51,11 +51,28 @@
       return dp[n]
     }
 
-    console.log(fib(20))
 
-    console.log(fib2(20))
+    function fib4(n) {
+      if (n == 1 || n == 2) return 1;
 
-    console.log(fib3(20))
+      let prev = 1, curr = 1
+
+      for (let i = 3; i <= n; i++) {
+        var sum = prev  + curr
+        prev = curr
+        curr = sum
+      }
+      return sum
+    }
+
+    // console.log(fib(20))
+
+    // console.log(fib2(20))
+
+    // console.log(fib3(20))
+
+    console.log(fib4(20))
+    
 
 
     console.log('-----------------------------------------------1------------------------' + fibNumber)
