@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div class="backtrack"></div>
+  <script>
+
+    var result = []
+    var arr = [0,1]
+
+    function backtrack(nums, list) {
+      
+
+      if (list.length == nums.length) {
+        var arr = [...nums]
+
+        result.push(arr)
+        return
+      }
+
+      for (let i = 0; i < list.length; i++) {
+        if (nums.includes(list[i])) {
+          continue
+        }
+        nums.push(list[i])
+        backtrack(nums, list)
+        nums.pop()
+      }
+    }
+
+    backtrack([], arr)
+
+    console.log(result)
+  </script>
+</body>
+
+</html>
