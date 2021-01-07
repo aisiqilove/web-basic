@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    // var root = [1, 2]
+
+    // var root = [3, 9, 20, null, null, 15, 7]
+
+    var root = [2,null,3,null,4,null,5,null,6]
+
+    function TreeNode(val, left, right) {
+      this.val = (val === undefined ? 0 : val)
+      this.left = (left === undefined ? null : left)
+      this.right = (right === undefined ? null : right)
+    }
+    function toNode(node) {
+      if (node == null) {
+        return null
+      } else {
+        return new TreeNode(node)
+      }
+    }
+
+    // 数组转二叉树
+    function arrayToTree(arr) {
+
+      const queue = []
+      const tree = toNode(arr.shift())
+      queue.push(tree)
+
+      while (arr.length) {
+        const cur = queue.shift()
+
+        cur.left = toNode(arr.shift())
+        cur.right = toNode(arr.shift())
+
+        if (cur.left) queue.push(cur.left)
+        if (cur.right) queue.push(cur.right)
+
+      }
+      return tree
+    }
+
+    // 二叉树转数组
+    function treeToArray(root) {
+      const queue = []
+      let list = []
+      queue.push(root)
+      
+      while (queue.length>0) {
+        let cur = queue.shift()
+        if (cur.left) {
+          list.push(cur.left.val)
+          queue.push(cur.left)
+        } else {
+          list.push(null)
+        }
+        if (cur.right) {
+          list.push(cur.right.val)
+          queue.push(cur.right)
+        } else {
+          list.push(null)
+        }
+      }
+
+      let point = list.length - 1
+      while (list[point] === null) {
+          list.pop()
+          point--
+      }
+      
+      // 判断完全二叉树 结构中不能有null
+
+      // return list.every(item => item !== null)
+      
+      return [root.val].concat(list)
+
+    }
+    var a = arrayToTree(root)
+    var b = treeToArray(a)
+
+    function minDepth(root) {
+      if (root == null) return 0
+      const queue = [root]
+      let step = 1
+      while (queue.length) {
+        let level = queue.length
+        for (let i = 0; i < level; i++) {
+          const cur = queue.shift()
+          if (cur.left == null && cur.right == null) {
+            return step
+          }
+          if (cur.left) queue.push(cur.left)
+          if (cur.right) queue.push(cur.right)
+        }
+        step++
+      }
+    }
+    // var step = minDepth(a)
+
+  </script>
+</body>
+
+</html>
