@@ -13,7 +13,7 @@
 
     // var root = [3, 9, 20, null, null, 15, 7]
 
-    var root = [2,null,3,null,4,null,5,null,6]
+    var root = [2, null, 3, null, 4, null, 5, null, 6]
 
     function TreeNode(val, left, right) {
       this.val = (val === undefined ? 0 : val)
@@ -53,8 +53,8 @@
       const queue = []
       let list = []
       queue.push(root)
-      
-      while (queue.length>0) {
+
+      while (queue.length > 0) {
         let cur = queue.shift()
         if (cur.left) {
           list.push(cur.left.val)
@@ -72,14 +72,14 @@
 
       let point = list.length - 1
       while (list[point] === null) {
-          list.pop()
-          point--
+        list.pop()
+        point--
       }
-      
+
       // 判断完全二叉树 结构中不能有null
 
       // return list.every(item => item !== null)
-      
+
       return [root.val].concat(list)
 
     }
