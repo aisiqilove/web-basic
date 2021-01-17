@@ -1,11 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
 </head>
+
 <body>
-  
+  <div class="str"></div>
+  <div class="checkInclusion"></div>
+  <div class="findAnagrams"></div>
+  <div class="lengthOfLongestSubstring"></div>
+  <script>
+    let s = "ADOBECODEBANC", t = "ABC"
+
+    var minWindow = function (s, t) {
+      let need = {}
+      let window = {}   // 需要凑齐的字符
+
+      for (let c of t) {
+        if (!need[c]) {
+          need[c] = 1
+        } else {
+          need[c]++
+        }
+        window[c] = 0
+      }
+      let curLen = Object.keys(need).length
+      let left = 0, right = 0, valid = 0
+      // 记录最小覆盖子串的起始索引及长度
+      let start = 0, len = Infinity
+      while (right < s.length) {
+        // c 是将移入窗口的字符
+        const c = s[right]
+        // 右移窗口
+        right++
+        // 进行窗口内数据的一系列更新
+        if (need[c]) {
+          window[c]++
+          if (window[c] == need[c]) {
+            valid++
+          }
+        }
+        // 判断左侧窗口是否要收缩
+        while (valid == curLen) {
+          // 在这里更新最小覆盖子串
+          if (right - left < len) {
+            start = left
+            len = right - left
+          }
+          // d 是将移出窗口的字符
+          const d = s[left]
+          // 左移窗口
+          left++
+          // 进行窗口内数据的一系列更新
+          if (need[d]) {
+            if (window[d] == need[d]) {
+              valid--
+            }
+            window[d]--
+          }
+        }
+      }
+      // 返回最小覆盖子串
+      return len == Infinity ? "" : s.substr(start, len)
+    };
+
+    var checkInclusion = (s1, s2) => {
+      let left = right = valid = 0
+
+      let need = {}
+      let window = {}
+      for (let c of s1) {
+        if (!need[c]) {
+          need[c] = 1
+        } else {
+          need[c]++
+        }
+        window[c] = 0
+      }
+      while (right < s2.length) {
+        const c = s2[right]
+        if (need[c]) {
+          window[c]++
+          if (window[c] == need[c]) {
+            valid++
+          }
+        }
+        right++
+        while (right - left >= s1.length) {
+          if (valid == Object.keys(need).length) {
+            return true
+          }
+          const d = s2[left]
+          if (need[d]) {
+            if (window[d] == need[d]) {
+              valid--
+            }
+            window[d]--
+          }
+          left++
+        }
+      }
+
+      return false
+    }
+
+    var findAnagrams = (s, p) => {
+      let left = right = valid = 0
+
+      let need = {}
+      let window = {}
+      var res = []
+      for (let c of p) {
+        if (!need[c]) {
+          need[c] = 1
+        } else {
+          need[c]++
+        }
+        window[c] = 0
+      }
+      while (right < s.length) {
+        const c = s[right]
+        if (need[c]) {
+          window[c]++
+          if (window[c] == need[c]) {
+            valid++
+          }
+        }
+        right++
+        while (right - left >= p.length) {
+          if (valid == Object.keys(need).length) {
+            res.push(left)
+          }
+          const d = s[left]
+          if (need[d]) {
+            if (window[d] == need[d]) {
+              valid--
+            }
+            window[d]--
+          }
+          left++
+        }
+      }
+
+      return res
+    }
+
+    var lengthOfLongestSubstring = (s) => {
+
+      let left = right = 0
+
+      let window = {}
+      let res = 0
+      for (let c of s) {
+        window[c] = 0
+      }
+
+      while (right < s.length) {
+        const c = s[right]
+        right++
+        window[c]++
+        while (window[c] > 1) {
+          const d = s[left]
+          left++
+          window[d]--
+        }
+
+        res = Math.max(res, right - left)
+      }
+      return res
+    }
+
+    var str = minWindow(s, t)
+    var str2 = checkInclusion(t, s)
+    var str3 = findAnagrams('bascbajkkcbabc', 'abc')
+    var str4 = lengthOfLongestSubstring('bascbajkkcbabc')
+    
+    var dom = document.querySelector('.str')
+    var dom2 = document.querySelector('.checkInclusion')
+    var dom3 = document.querySelector('.findAnagrams')
+    var dom4 = document.querySelector('.lengthOfLongestSubstring')
+
+    dom.innerHTML = str
+    dom2.innerHTML = str2
+    dom3.innerHTML = str3
+    dom4.innerHTML = str4
+  </script>
 </body>
+
 </html>
