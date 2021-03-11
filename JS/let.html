@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    let a = 1;
+    let test = function () {
+      console.log(a);
+      let a = 2;
+      a++;
+    }
+    // test();
+
+    // 其原因是在同一个 block 中，let 在后面重新定义的，那么就不能在之前引用该变量。同时，也不能取嵌套外层的值。 
+    // 输出：Uncaught ReferenceError: Cannot access 'a' before initialization
+
+
+    // 在 ES5 中只有全局作用域和函数作用域，没有块级作用域，这会带来些许麻烦：
+    // 1.内层变量覆盖外层变量
+    var tmp = new Date();
+
+    function f() {
+      console.log(tmp);
+      if (false) {
+        var tmp = "hello";
+      }
+    }
+
+    // f(); // undefine
+
+    // 2.循环的变量泄露为全局变量
+    for (var i = 0; i < 3; i++) {
+
+    }
+    // console.log(i); // 3
+
+    var foo = { n: 1 };
+
+    (function (foo) {
+      console.log(foo.n);
+      foo.n = 2;            // 形参 和 实参 指向内存空间变量n被修改为2
+
+      foo = { n: 2 };      // 形参foo指向新内存空间
+
+      foo.n = 3;            // 形参foo新内存空间变量n被修改为3
+      console.log(foo.n);
+    })(foo)
+
+    console.log(foo.n);
+
+    // var foo = { n: 1 };
+    // (function (foo) {            // 形参 foo 同实参 foo 一样指向同一片内存空间，这个空间里的 n 的值为 1
+    //   var foo;               // 优先级低于形参，无效。
+    //   console.log(foo.n);    // 输出 1
+    //   foo.n = 3;             // 形参与实参 foo 指向的内存空间里的 n 的值被改为 3
+    //   foo = { n: 2 };        // 形参 foo 指向了新的内存空间，里面 n 的值为 2.
+    //   console.log(foo.n);    // 输出新的内存空间的 n 的值
+    // })(foo);
+    // console.log(foo.n);        // 实参 foo 的指向还是原来的内存空间，里面的 n 的值为 3.
+
+
+    function instanceOf2(a, b) {
+      if (typeof a !== 'object' || b === null) {
+        return false
+      }
+      const prototype = b.prototype
+      while (a) {
+
+        if (a === null) {
+          return false
+        }
+        if (a === prototype) {
+          return true
+        }
+        a = a.__proto__
+      }
+    }
+
+    console.log(instanceOf2({}, Object))
+    // console.log(Object instanceof Object)
+
+    console.log(Object.prototype.toString.call({}).slice(8, -1))
+  </script>
+</body>
+
+</html>

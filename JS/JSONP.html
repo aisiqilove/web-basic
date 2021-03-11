@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    function JSONP({
+      url,
+      params = {},
+      callbackKey = "cb",
+      callback,
+    }) {
+      // 定义本地的唯一 callBackId，防止多次调用的时候出问题
+      window.callBackId = window.callBackId || 1; // 默认为 1
+
+      // 拿到这个 id
+      const callBackId = window.callBackId;
+
+      // 将要执行的回调假如到 JSONP 对象中，避免污染 window
+      window.callbacks = window.callbacks || [];
+      window.callbacks[callBackId] = callback;
+
+      // 把这个名称加入到参数中：`cb = JSONP.callbacks[1]`
+      params[callbackKey] = `window.callbacks[${callBackId}]`;
+
+      // 组合 params：'id=1&cb=JSONP.callbacks[1]'
+      const paramString = Object.keys(params).map((key) => `${key}=${params[key]}`);
+      // 动态创建 script 标签
+      const script = document.createElement("script");
+      script.setAttribute("src", `${url}?${paramString.join('&')}`);
+      document.body.appendChild(script);
+
+      // id 自增，保证唯一
+      window.callBackId++;
+    }
+
+    JSONP({
+      url: "http://localhost:4443/api/jsonp",
+      params: { id: 1 },
+      callbackKey: "cb",
+      callback(res) {
+        console.log(res);
+      },
+    });
+  </script>
+</body>
+
+</html>
