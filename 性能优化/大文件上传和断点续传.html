@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>大文件上传和断点续传</title>
+</head>
+
+<body>
+  <input type="file">
+
+  <script>
+
+    const input = document.querySelector('input')
+    input.addEventListener('change', handleFileChange)
+    function handleFileChange(e) {
+      const files = e.target.files;
+      const formDate = new FormData();
+      // 遍历对象中的每一个文件，并逐一添加到 formDate 实例对象中
+      for (let file of Object.values(files)) {
+        formDate.append("file", file);
+      }
+      fetch('http://localhost:3000/v1/token/verify', {
+        method: 'POST', // or 'PUT'
+        mode: 'no-cors',
+        body: formDate, // data can be `string` or {object}!
+
+      }).then(res => {
+        console.log(res)
+      })
+    }
+  </script>
+</body>
+
+</html>
