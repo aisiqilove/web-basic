@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promise异步请求串行&并行</title>
+</head>
+
+<body>
+    <script>
+        var urls = ['url1', 'url2', 'url3', 'url4'];
+        const getResponse = (url) => {
+            return new Promise((resolve, reject) => {
+                console.log('参数为：', url)
+                setTimeout(() => {
+                    console.log('异步请求后结果为', 'afeter' + url);
+                    if (url === 'url3') {
+                        reject('err' + url)
+                    }
+                    resolve(url);
+                }, 1000)
+            })
+        }
+
+        const promiseAll = arr => {
+            const result = new Array(arr.length).fill(null);
+            let count = 0;
+            return new Promise((resolve, reject) => {
+                for (let i = 0; i < arr.length; i++) {
+                    getResponse(arr[i]).then((res) => {
+                        result[i] = res;
+                        count++;
+                        if (count === arr.length) {
+                            resolve(result);
+                        }
+                    }).catch((err) => {
+                        reject(err);
+                    })
+                }
+            })
+        }
+
+        // const res = promiseAll(urls).then(res => {
+        //     console.log(res)
+        // });
+        // const res3 = Promise.race(urls).then(res => {
+        //     console.log(res)
+        // });
+        // const res2 = Promise.all(urls).then((res) =>{
+        //     console.log(res)
+        // });
+
+        {// #使用Promise实现每隔1秒输出1,2,3
+            // const arr = [1, 2, 3]
+            // arr.reduce((p, x) => {
+            //     return p.then(() => {
+            //         return new Promise(r => {
+            //             setTimeout(() => r(console.log(x)), 1000)
+            //         })
+            //     })
+            // }, Promise.resolve())
+        }
+        {
+            // #红灯3秒亮一次，黄灯2秒亮一次，绿灯1秒亮一次；如何让三个灯不断交替重复亮灯？（用Promise实现）三个亮灯函数已经存在：
+            function red() {
+                console.log('red');
+            }
+            function green() {
+                console.log('green');
+            }
+            function yellow() {
+                console.log('yellow');
+            }
+
+            const light = (timer, cb) => {
+                return new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        cb();
+                        resolve();
+                    }, timer)
+                })
+            }
+
+            const step = () => {
+                Promise.resolve().then(() => {
+                    return light(3000, red);
+                }).then(() => {
+                    return light(2000, green);
+                }).then(() => {
+                    return light(1000, yellow);
+                }).then(() => {
+                    return step();
+                })
+            }
+
+            // step();
+
+        }
+
+        {
+            // #限制异步操作的并发个数并尽可能快的完成全部
+            const multiRequest = (urls, maxNum) => {
+                
+            }
+        }
+
+
+    </script>
+</body>
+
+</html>

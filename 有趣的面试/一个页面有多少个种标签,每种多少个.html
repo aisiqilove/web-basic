@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一个页面有多少个种标签,每种多少个</title>
+</head>
+
+<body>
+    <input id="upload" type="file" accept="image/*" capture="camera" class="abc">
+
+    <div class="container">
+        <div>img</div>
+        <div>title <span>icon</span> </div>
+        <p>content page</p>
+        <img src="" alt="">
+        <video src=""></video>
+        <audio src=""></audio>
+        <nav></nav>
+        <section></section>
+        <main></main>
+    </div>
+    <script>
+        let doms = document.querySelectorAll('*')
+        doms = Array.from(doms)
+        const objNames = {}
+        let len = 0
+        doms.forEach(el => {
+            if (!objNames[el.tagName]) {
+                objNames[el.tagName] = 1
+                len += 1
+            } else {
+                objNames[el.tagName] += 1
+            }
+        })
+    </script>
+</body>
+
+</html>

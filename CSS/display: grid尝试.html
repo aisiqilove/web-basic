@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>display: grid</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    div {
+      /* width: 32vw;
+      height: 33vw; */
+    }
+
+    body {
+      width: 100vw;
+      height: 100vh;
+    }
+
+    .main {
+      display: inline-grid;
+      /* grid-template-columns: 100px 100px 100px;
+      grid-template-rows: 100px 100px 100px; */
+      font-size: 30px;
+      text-align: center;
+      line-height: 100px;
+      width: 100vw;
+      height: 100vw;
+      overflow-x: auto;
+      grid-template-columns: repeat(3, 30%);
+      grid-template-rows: repeat(3, 30%);
+      /* grid-template-columns: repeat(auto-fill, 33.33%); */
+      /* 左右两侧固定 中间自适应 */
+      /* grid-template-columns: 100px auto 100px; */
+      /* 两栏布局 */
+      /* grid-template-columns: 70% 30%;  */
+      /* 两栏布局 */
+      /* grid-template-columns: repeat(12, 1fr); */
+      /*  */
+      grid-template-areas: 'a b c'
+        'd e f'
+        'g h i';
+      grid-row-gap: 20px;
+      grid-column-gap: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <header>header</header>
+  <main class="main">
+    <div>
+      <p>1</p>
+    </div>
+    <div>
+      <p>2</p>
+    </div>
+    <div>
+      <p>3</p>
+    </div>
+    <div>
+      <p>4</p>
+    </div>
+    <div>
+      <p>5</p>
+    </div>
+    <div>
+      <p>6</p>
+    </div>
+    <div>
+      <p>7</p>
+    </div>
+    <div>
+      <p>8</p>
+    </div>
+    <div>
+      <p>9</p>
+    </div>
+  </main>
+  <footer>foo</footer>
+</body>
+
+<script>
+  var main = document.querySelector('.main');
+  Array.from(main.children).forEach(element => {
+    // element.style
+    var r = parseInt(Math.random() * 255);
+    var g = parseInt(Math.random() * 255);
+    var b = parseInt(Math.random() * 255);
+    var color = `rgba(${r},${g},${b},1)`;
+    element.style.backgroundColor = color;
+  });
+</script>
+
+</html>

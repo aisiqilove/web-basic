@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+</body>
+<script src="./mini-reactivity.js"></script>
+<script>
+    let obj = { a: 11, text: "hello" };
+    let reactivity = reactive(obj);
+    effect(() => {
+        document.body.innerText = reactivity.text;
+    });
+
+    // 一秒后修改响应式数据，这会触发副作用函数重新执行
+    setTimeout(() => {
+        reactivity.text += " world";
+    }, 1000);
+</script>
+
+</html>
