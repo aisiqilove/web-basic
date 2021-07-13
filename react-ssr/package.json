@@ -19,6 +19,7 @@
     "koa": "^2.13.1",
     "koa-router": "^10.0.0",
     "koa-static": "^5.0.0",
+    "puppeteer": "^10.1.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-router-dom": "^5.2.0",

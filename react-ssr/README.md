@@ -10,3 +10,8 @@
 
 5. store 初始化store
 
+## 其他ssr实现
+
+1. puppeteer
+2. prerender
+3. next
