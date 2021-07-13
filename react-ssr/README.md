@@ -3,3 +3,7 @@
 1. renderToString 服务端react 解析成html
 
 2. 服务端无法解析jsx 需要使用babel
+
+3. 同构 两个入口：client和server
+
+4. 
