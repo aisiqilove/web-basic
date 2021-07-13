@@ -6,4 +6,7 @@
 
 3. 同构 两个入口：client和server
 
-4. 
+4. staticRouter 服务端路由
+
+5. store 初始化store
+
