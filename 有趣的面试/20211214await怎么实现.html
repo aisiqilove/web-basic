@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <script>
+        let num = 1;
+        function b() {
+            return new Promise(resolve => {
+                setTimeout(() => resolve(num++), 1000);
+            });
+        }
+        function* a() {
+            let value1 = yield b();
+            let value2 = yield b();
+            let value3 = yield b();
+            console.log(value1,value2,value3)
+            return value3
+        }
+        function* test() {
+
+            let value1 = yield 1;
+            let value2 = yield 2;
+            let value3 = yield 3;
+            console.log('value1:',value1,'value2:',value2,'value3:',value3)
+            return value3 
+        }
+        // let iter = a();
+        // iter.next('one');
+        // iter.next('tow');
+        // iter.next('three');
+        // iter.next('');
+
+        function Co(genFn) {
+            return new Promise((resolve,reject) => {
+                let next = function(data)  {
+                    let { value, done } = genFn.next(data)
+                    if(done) {
+                        resolve(value)
+                    } else {
+                        value instanceof Promise ?
+                        value.then(val => {next(value)}, reject) : next(value)
+                    }
+                }
+                next();
+            })
+        }
+        let coIter = Co(a())
+        
+    </script>
+</body>
+
+</html>
