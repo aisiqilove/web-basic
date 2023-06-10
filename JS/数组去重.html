@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        // 去重
+        function unique(arr) {
+            let res = []
+            for (let i = 0; i < arr.length; i++) {
+                if (res.indexOf(arr[i]) === -1) {
+                    res.push(arr[i])
+                }
+            }
+            return res
+        }
+        // console.log(unique([1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2]))
+
+        // es6去重
+        function unique_es6(arr) {
+            return [...new Set(arr)]
+            // return Array.from(new Set(arr))
+        }
+        // console.log(unique_es6([1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2]))
+
+        // 数组中有对象 去重 同时不能有两个属性相关的对象，比如{a:1}和{a:1}不能同时出现
+
+        function unique_obj(arr) {
+            let res = []
+            let obj = {}
+            for (let i = 0; i < arr.length; i++) {
+                if (!obj[arr[i]]) {
+                    res.push(arr[i])
+                    obj[arr[i]] = 1
+                }
+            }
+            return res
+        }
+
+        function unique_obj2(arr) {
+            let res = []
+            for (let i = 0; i < arr.length; i++) {
+                const item1 = arr[i]
+                let flag = false
+                for (let j = 0; j < res.length; j++) {
+                    const item2 = res[j]
+                    if (equal(item1, item2)) {
+                        flag = true
+                        break
+                    }
+                }
+                if (!flag) {
+                    res.push(item1)
+                }
+            }
+            return res
+        }
+
+        function isPrimitive(obj) {
+            return obj === null || !['object', 'function'].includes(typeof obj)
+        }
+
+        function equal(obj1, obj2) {
+            console.log(obj1, obj2)
+            if (isPrimitive(obj1) || isPrimitive(obj2)) {
+                return Object.is(obj1, obj2);
+            }
+            const entries1 = Object.entries(obj1)
+            const entries2 = Object.entries(obj2)
+
+            if (entries1.length !== entries2.length) {
+                return false
+            }
+            for(const [key,value] of entries1) {
+                if(!Object.prototype.hasOwnProperty.call(obj2, key)) {
+                    return false
+                }
+                if(!equal(value, obj2[key])) {
+                    return false
+                }
+            }
+            return true
+        }
+
+        console.log(unique_obj2([ {  a: 1, c: NaN }, { a: 1, b: NaN }]))
+
+
+
+    </script>
+</body>
+
+</html>
