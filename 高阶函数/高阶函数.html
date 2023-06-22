@@ -17,7 +17,7 @@
     // 函数作为返回值输出
 
     let isType = type => obj => {
-      return Object.prototype.toString.call(obj) === '[object ' + type + ']';
+      return Object.prototype.toString.call(obj) === `[object${type}]`;
     }
   </script>
 </body>
