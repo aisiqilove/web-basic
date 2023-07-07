@@ -23,9 +23,7 @@ newTab.location = url;
 4. XSS（跨站脚本攻击）
 
 原理：攻击者在目标网站植入恶意脚本（js / html），用户在浏览器上运行时可以获取用户敏感信息（cookie / session）、修改web页面以欺骗用户
-防御：1. 转义 HTML 2. HTTP-only Cookie: 禁止 JavaScript 读取某些敏感 Cookie，攻击者完成 XSS 注入后也无法窃取此 Cookie。
-
-3. 验证码：防止脚本冒充用户提交危险操作。
+防御：1. 转义 HTML 2. HTTP-only Cookie: 禁止 JavaScript 读取某些敏感 Cookie，攻击者完成 XSS 注入后也无法窃取此 Cookie。3. 验证码：防止脚本冒充用户提交危险操作。
 
 5. ClickJacking（点击劫持）
 
